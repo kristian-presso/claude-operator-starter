@@ -75,6 +75,19 @@ install Python). Run `/hooks` in Claude Code to see it listed under `PreToolUse`
 On claude.ai or the Claude desktop app, upload `skills/setup-operator/` or
 `skills/weekly-review/` as a custom skill. The hook does not come with them.
 
+## Tested
+
+Evaluated with `claude plugin eval`: five cases per skill (three it should handle, two
+near-misses), three runs with the plugin and three without, graded by a separate model.
+Results from 16/10/2026:
+
+| Skill | With | Without | Gain |
+| --- | --- | --- | --- |
+| setup-operator | 1.00 | 0.83 | +0.17 |
+| weekly-review | 1.00 | 0.78 | +0.22 |
+
+Both near-miss cases for each skill scored 1.00: the skills stayed out of the way.
+
 ## Tests
 
 The hook has unit tests covering blocked, allowed and malformed input, standard library
