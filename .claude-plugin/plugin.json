@@ -1,0 +1,12 @@
+{
+  "name": "operator-starter",
+  "version": "0.1.0",
+  "description": "A way of working for running a small business or side project with Claude Code: an interview that writes your CLAUDE.md rules and memory folder, approval-gate hooks that ask before Claude sends, publishes, pays or deletes, and a Friday weekly review.",
+  "author": {
+    "name": "Kristian Papadakis",
+    "url": "https://kristianpapadakis.com"
+  },
+  "homepage": "https://github.com/kristian-presso/claude-skills",
+  "license": "MIT",
+  "keywords": ["operations", "founder", "small-business", "claude-md", "hooks", "approval", "weekly-review"]
+}

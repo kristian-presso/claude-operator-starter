@@ -1,0 +1,19 @@
+{
+  "description": "Approval gate: asks before Claude sends, publishes, pays or deletes. Configure with .claude/approval-gate.json in your project.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^(Bash|mcp__.*)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/approval_gate.py"],
+            "timeout": 10,
+            "statusMessage": "Checking the approval gate"
+          }
+        ]
+      }
+    ]
+  }
+}
