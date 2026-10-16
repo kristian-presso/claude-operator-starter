@@ -9,7 +9,7 @@
     {
       "name": "operator-starter",
       "source": "./",
-      "description": "A way of working for running a small business or side project with Claude Code: an interview that writes your CLAUDE.md rules and memory folder, approval-gate hooks that ask before Claude sends, publishes, pays or deletes, and a Friday weekly review.",
+      "description": "A way of working for running a small business or side project with Claude Code: an interview that writes your CLAUDE.md rules and memory folder, approval-gate hooks that ask before Claude sends, publishes, pays or deletes, a Friday weekly review, and an always-on Mac to run scheduled agent jobs unattended.",
       "category": "productivity",
       "keywords": [
         "operations",

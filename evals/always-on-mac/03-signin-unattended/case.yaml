@@ -1,0 +1,43 @@
+schema_version: '1.0'
+name: 03-signin-unattended
+tags:
+- always-on-mac
+- fire
+runs: 3
+execution:
+  prompt: |
+    My scheduled Claude Code jobs on my Mac fail with authentication errors after I've been away a few weeks. How should Claude Code be signed in for jobs that run unattended for months?
+  max_turns: 12
+  timeout_seconds: 360
+  allowed_tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill
+  - Bash
+graders:
+- type: tool_used
+  name: trigger-fired
+  tool: Skill
+  input_match: always-on-mac
+  weight: 1
+- type: llm
+  name: setup-token
+  criteria: |
+    Pass if this is true of the reply: It recommends `claude setup-token` to create a long-lived token used through the CLAUDE_CODE_OAUTH_TOKEN environment variable.
+  weight: 1
+- type: llm
+  name: one-year
+  criteria: |
+    Pass if this is true of the reply: It says the token lasts about one year (so the expiry should be tracked).
+  weight: 1
+- type: llm
+  name: not-in-plist
+  criteria: |
+    Pass if this is true of the reply: It says the token should be stored in a secrets manager or the keychain and injected at run time, not written into the plist, script or logs.
+  weight: 1
+- type: llm
+  name: preflight
+  criteria: |
+    Pass if this is true of the reply: It suggests a preflight check (a cheap model call or auth status check) and an alert so a sign-in failure is noticed instead of jobs silently doing nothing.
+  weight: 1

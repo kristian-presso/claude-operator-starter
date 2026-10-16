@@ -1,0 +1,43 @@
+schema_version: '1.0'
+name: 02-unattended-host-setup
+tags:
+- always-on-mac
+- fire
+runs: 3
+execution:
+  prompt: |
+    I'm turning an old MacBook Air into a machine that runs my Claude Code jobs 24/7 while I travel. What do I need to set so it keeps running, and how do I reach it from my phone?
+  max_turns: 12
+  timeout_seconds: 360
+  allowed_tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill
+  - Bash
+graders:
+- type: tool_used
+  name: trigger-fired
+  tool: Skill
+  input_match: always-on-mac
+  weight: 1
+- type: llm
+  name: pmset-both-sources
+  criteria: |
+    Pass if this is true of the reply: It gives pmset settings to stop system sleep and notes that settings differ on mains and battery (or uses disablesleep to cover both).
+  weight: 1
+- type: llm
+  name: laptop-specifics
+  criteria: |
+    Pass if this is true of the reply: It covers laptop-specific points: keep it plugged in with a battery charge limit (around 80%), and that it will sleep with the lid closed (without an external display) / cannot power itself back on after a power cut.
+  weight: 1
+- type: llm
+  name: filevault-restart
+  criteria: |
+    Pass if this is true of the reply: It explains that with FileVault on, the Mac waits at the unlock screen after a restart and runs nothing until unlocked, and suggests a plan for that (for example turning off automatic macOS installs or SSH unlock on recent macOS).
+  weight: 1
+- type: llm
+  name: remote-network
+  criteria: |
+    Pass if this is true of the reply: It suggests a private device network (such as Tailscale or another mesh VPN) with Remote Login for remote access, rather than opening port 22 to the internet.
+  weight: 1

@@ -1,6 +1,6 @@
 # Operator starter for Claude Code
 
-**Set up a project so Claude Code can help run a small business or side project safely: one interview writes the rules, a hook makes Claude ask before it sends, publishes, pays or deletes, and a Friday review keeps the week honest.**
+**Set up a project so Claude Code can help run a small business or side project safely: one interview writes the rules, a hook makes Claude ask before it sends, publishes, pays or deletes, a Friday review keeps the week honest, and a Mac you own runs the scheduled jobs unattended.**
 
 ```bash
 /plugin marketplace add kristian-presso/claude-operator-starter
@@ -17,6 +17,7 @@ The other departments are skills: judgement Claude picks up when a task calls fo
 | --- | --- |
 | [setup-operator](skills/setup-operator/SKILL.md) (skill) | Starting out in a project folder. Asks four questions one at a time (what you run, which tools you use, what must never happen without your say-so, British or US spelling), then writes a `CLAUDE.md` with working rules and approval rules, a `memory/` folder (`decisions/`, `people/`, `playbooks/`) with a README, a `.claude/approval-gate.json`, and the Friday routine. Merges into an existing `CLAUDE.md` rather than replacing it. Say "set me up". |
 | [weekly-review](skills/weekly-review/SKILL.md) (skill) | Fridays. Reads the week's git history, notes and last week's review before asking anything, then writes what shipped, what is stuck (each with a next move and an owner), decisions made (saved to `memory/decisions/`), and the one thing to automate next. Saves to `memory/reviews/`. Say "weekly review". |
+| [always-on-mac](skills/always-on-mac/SKILL.md) (skill) | You want a Mac you own to run Claude Code jobs, or any scheduled agent work, unattended: launchd instead of cron, the bare PATH that makes jobs exit 0 and do nothing, sleep and power, FileVault and restarts, signing Claude in for months, remote access, off-box monitoring and backups. Includes a read-only health check, `scripts/host_check.sh`, that prints `PASS`, `GAP` or `MANUAL` per line. Says so when a cloud scheduler would do instead. |
 | Approval gate (hook) | Always, once installed. A `PreToolUse` hook that runs before every shell command and MCP tool call and makes Claude Code ask you first when the call sends, publishes, pays or deletes. |
 
 ## Tested, not just written
@@ -27,8 +28,9 @@ Each skill is evaluated with Claude Code's built-in `claude plugin eval`: five c
 | --- | --- | --- | --- |
 | setup-operator | 1.00 | 0.83 | +0.17 |
 | weekly-review | 1.00 | 0.78 | +0.22 |
+| always-on-mac | 1.00 | 0.80 | +0.20 |
 
-Both near-miss cases for each skill scored 1.00: the skills stayed out of the way. The hook has 45 unit tests of its own (see below).
+The near-miss cases for every skill scored 1.00: the skills stayed out of the way. always-on-mac fired in 15 of 15 runs where it should and in none where it should not. The hook has 45 unit tests of its own and the always-on-mac scripts have 15 (see below).
 
 ## Install
 
@@ -54,7 +56,7 @@ The hook needs `python3` on your PATH (macOS and Linux have it; on Windows use W
 
 ### Claude app
 
-On claude.ai or the Claude desktop app, download this repository as a zip (Code, then Download ZIP), take `skills/setup-operator/` or `skills/weekly-review/` (the folder containing `SKILL.md`), zip that folder on its own and upload it in your skills settings. Each skill works on its own. The hook does not come with them: in the app, the `CLAUDE.md` rules are guidance, not a lock.
+On claude.ai or the Claude desktop app, download this repository as a zip (Code, then Download ZIP), take `skills/setup-operator/`, `skills/weekly-review/` or `skills/always-on-mac/` (the folder containing `SKILL.md`), zip that folder on its own and upload it in your skills settings. Each skill works on its own. The hook does not come with them: in the app, the `CLAUDE.md` rules are guidance, not a lock.
 
 ## How the approval gate works
 
@@ -104,7 +106,9 @@ Two honest limits. It is a guard rail that matches text, not a sandbox: an obfus
 
 ## Configuration
 
-Two things vary: which tools you have connected (they decide which MCP tool names belong in your gate config) and where you keep notes (default `memory/` in the project). Neither needs any particular service to work.
+Two things vary: which tools you have connected (they decide which MCP tool names belong in your gate config) and where you keep notes (default `memory/` in the project). Neither needs any particular service to work. For `always-on-mac`, it matters whether the Mac is a laptop or a desktop, and how you reach it remotely.
+
+Claude Code sign-in facts in `always-on-mac` were checked on 16/10/2026 against code.claude.com/docs, and macOS facts against Apple's release notes. Re-check them before relying on them.
 
 ## Re-run the evals and tests
 
@@ -114,7 +118,7 @@ The eval cases live in `evals/`, one folder per skill. From the repository root:
 claude plugin eval . --trust-plugin --scaffold --ablation with-without --runs 3 --no-publish
 ```
 
-Every push runs the same checks as CI: each skill through the validator, the hook's unit tests (blocked, allowed and malformed input, standard library only, `git` on PATH), and the manifests through `claude plugin validate`:
+Every push runs the same checks as CI: each skill through the validator, the unit tests for the hook and for the always-on-mac health check and job wrapper (standard library only, `git` on PATH, macOS commands stubbed so they run anywhere), and the manifests through `claude plugin validate`:
 
 ```bash
 for d in skills/*/; do python3 tools/validate_skill.py "$d"; done
