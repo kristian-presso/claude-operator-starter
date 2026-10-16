@@ -1,0 +1,45 @@
+schema_version: '1.0'
+name: 01-one-question-at-a-time
+description: Partial brief. Should acknowledge what it knows and ask the next missing question only.
+tags:
+- setup-operator
+- fire
+- interview
+runs: 3
+execution:
+  prompt: |
+    Set me up. I run a two-person bookkeeping practice and I want Claude to help with the admin, but it must never email a client without asking me first.
+  max_turns: 6
+  timeout_seconds: 180
+  allowed_tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill
+graders:
+- type: tool_used
+  name: trigger-fired
+  tool: Skill
+  input_match: setup-operator
+- type: tool_used
+  name: no-files-written-yet
+  tool: Write
+  min: 0
+  max: 0
+  arm: both
+  weight: 0.5
+- type: llm
+  name: asks-one-question-1
+  criteria: |
+    Pass if this is true of the reply: It asks exactly ONE main question (a short clarifying example list inside that question still counts as one), not a list of several separate questions.
+  weight: 1.0
+- type: llm
+  name: asks-one-question-2
+  criteria: |
+    Pass if this is true of the reply: The question is about which tools or software the practice uses (email, accounting, calendar and so on), the next thing the user has not yet said.
+  weight: 1.0
+- type: llm
+  name: asks-one-question-3
+  criteria: |
+    Pass if this is true of the reply: It does not ask again what the business is, and does not ask again whether emailing clients needs approval; it shows it has taken those in (for example by reflecting them back).
+  weight: 1.0

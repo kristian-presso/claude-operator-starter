@@ -1,0 +1,50 @@
+schema_version: '1.0'
+name: 03-merge-existing-claude-md
+description: A CLAUDE.md already exists, with a rule that conflicts with the default push-to-main approval. Must merge, not overwrite, and flag the conflict.
+tags:
+- setup-operator
+- fire
+- merge
+runs: 3
+context:
+  scaffold_script: setup.sh
+execution:
+  prompt: |
+    Set this project up as my operator workspace. I sell art prints through my own site. Tools: the site code here, Gmail, Stripe. Never without asking: emails to customers, refunds. US spelling. Don't ask me anything else, just do it.
+  max_turns: 25
+  timeout_seconds: 420
+  allowed_tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill
+graders:
+- type: tool_used
+  name: trigger-fired
+  tool: Skill
+  input_match: setup-operator
+- type: llm
+  name: keeps-existing-1
+  criteria: |
+    Pass if this is true of the file: It still contains the original rules "Use pnpm, never npm" and the tests rule, unchanged in meaning.
+  weight: 1.0
+  focus: &merged
+    source: file
+    path: CLAUDE.md
+- type: llm
+  name: keeps-existing-2
+  criteria: |
+    Pass if this is true of the file: It contains new approval rules covering emails to customers and refunds.
+  weight: 1.0
+  focus: *merged
+- type: llm
+  name: keeps-existing-3
+  criteria: |
+    Pass if this is true of the file: It does not contain two contradictory rules about pushing to main (for example "pushing to main is fine" and "never push to main without approval" both present with no note reconciling them).
+  weight: 0.5
+  focus: *merged
+- type: llm
+  name: flags-conflict
+  criteria: |
+    Pass if this is true of the reply: It tells the user about the existing "pushing to main is fine" rule and how it relates to the approval rules (kept as is, or a question/note about it), rather than silently changing or ignoring it.
+  weight: 1.0

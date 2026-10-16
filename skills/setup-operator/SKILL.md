@@ -57,6 +57,8 @@ changes what you do. Then write:
    entry, and add any branch names they protect. Format and examples:
    [references/approval-gate.md](references/approval-gate.md). Only write entries you can
    tie to something they said; the built-in rules already cover the common cases.
+   Claude Code always asks before writing inside `.claude/`; that prompt is expected. If
+   the write is refused, show the file contents and ask the person to save it themselves.
 4. **The weekly routine**: the CLAUDE.md template has a `## Weekly review` section that
    tells Claude to run the `weekly-review` skill on Fridays, or whenever the person says
    "weekly review". If they would rather a different day, use it.

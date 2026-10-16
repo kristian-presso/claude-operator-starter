@@ -1,0 +1,55 @@
+schema_version: '1.0'
+name: 01-git-and-notes
+description: A week of commits, a notes file and last week's review. Should gather first and write a sourced review.
+tags:
+- weekly-review
+- fire
+- evidence
+runs: 3
+context:
+  scaffold_script: setup.sh
+execution:
+  prompt: |
+    weekly review. Don't ask me anything, use what's here.
+  max_turns: 25
+  timeout_seconds: 420
+  allowed_tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill
+graders:
+- type: tool_used
+  name: trigger-fired
+  tool: Skill
+  input_match: weekly-review
+- type: llm
+  name: review-1
+  criteria: |
+    Pass if this is true of the reply: It lists the gift-card checkout and the VAT rounding fix as shipped this week, and does not list the 12-day-old product photos as shipped this week.
+  weight: 1.0
+- type: llm
+  name: review-2
+  criteria: |
+    Pass if this is true of the reply: The courier API key appears as stuck, with a concrete next move that is different from or stronger than just "chase by email" again (for example phone them, escalate, or set a deadline), and a named owner.
+  weight: 1.0
+- type: llm
+  name: review-3
+  criteria: |
+    Pass if this is true of the reply: It records the decision about no free shipping under 30 as a decision.
+  weight: 1.0
+- type: llm
+  name: review-4
+  criteria: |
+    Pass if this is true of the reply: It says what happened to last week's stuck items: the gift-card checkout is now done (or shipped) and the courier key is still stuck.
+  weight: 1.0
+- type: llm
+  name: review-5
+  criteria: |
+    Pass if this is true of the reply: It picks exactly ONE next thing to automate (not a list of several), and the pick is the wholesale enquiry reply or is justified by this week's evidence.
+  weight: 1.0
+- type: llm
+  name: review-6
+  criteria: |
+    Pass if this is true of the reply: It does not claim to have sent, posted or shared the review with anyone.
+  weight: 0.5

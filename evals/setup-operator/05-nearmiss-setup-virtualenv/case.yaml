@@ -1,0 +1,30 @@
+schema_version: '1.0'
+name: 05-nearmiss-setup-virtualenv
+tags:
+- setup-operator
+- near-miss
+runs: 3
+execution:
+  prompt: |
+    Set me up with a Python virtual environment in this folder. Just tell me the commands, I'll run them.
+  max_turns: 4
+  timeout_seconds: 120
+  allowed_tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill
+graders:
+- type: tool_used
+  name: trigger-not-fired
+  tool: Skill
+  input_match: setup-operator
+  min: 0
+  max: 0
+  arm: both
+  weight: 1
+- type: llm
+  name: gives-commands
+  criteria: |
+    Pass if the reply gives working commands to create and activate a Python virtual environment (for example python3 -m venv .venv and source .venv/bin/activate).
+  weight: 1

@@ -1,0 +1,53 @@
+schema_version: '1.0'
+name: 03-carry-over-and-automation
+description: The user gives the week in words. Should carry over last week's items, write the decision down, pick one automation and save the review.
+tags:
+- weekly-review
+- fire
+- files
+runs: 3
+context:
+  scaffold_script: setup.sh
+execution:
+  prompt: |
+    Friday review please. This week: sent the VAT receipts to the accountant on Wednesday, so that's sorted. Booked 6 new dog-walking clients. Every one of them I had to send the same welcome pack email and add to the calendar by hand, took ages. Still haven't set up the Monday sales number thing. Decided on Thursday to stop taking clients outside the town centre. Don't ask me anything, just write it up and save it.
+  max_turns: 25
+  timeout_seconds: 420
+  allowed_tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill
+graders:
+- type: tool_used
+  name: trigger-fired
+  tool: Skill
+  input_match: weekly-review
+- type: file_exists
+  name: review-saved
+  path: memory/reviews/*.md
+  weight: 0.5
+- type: file_exists
+  name: decision-written
+  path: memory/decisions/*.md
+  weight: 0.5
+- type: llm
+  name: carry-1
+  criteria: |
+    Pass if this is true of the reply: It marks last week's VAT query stuck item as done or resolved.
+  weight: 1.0
+- type: llm
+  name: carry-2
+  criteria: |
+    Pass if this is true of the reply: It notes that last week's automation pick (the Monday sales number) was not built, carrying it forward or explicitly dropping or replacing it.
+  weight: 1.0
+- type: llm
+  name: carry-3
+  criteria: |
+    Pass if this is true of the reply: It names exactly ONE next automation, and it is the new-client welcome email and calendar step (or the Monday sales number with a stated reason), not a list of options.
+  weight: 1.0
+- type: llm
+  name: carry-4
+  criteria: |
+    Pass if this is true of the reply: It records "no clients outside the town centre" as a decision.
+  weight: 1.0

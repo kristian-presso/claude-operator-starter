@@ -1,0 +1,81 @@
+schema_version: '1.0'
+name: 02-all-answers-writes-files
+description: Every interview answer given up front. Should write CLAUDE.md, memory layout and gate config without asking.
+tags:
+- setup-operator
+- fire
+- files
+runs: 3
+execution:
+  prompt: |
+    Set up this folder as my operator workspace. Answers so you don't need to ask:
+    - I run a small online shop selling handmade candles. Just me and a part-timer.
+    - Tools: Shopify, Gmail (connected to Claude), Stripe, Xero, and Buffer for Instagram (connected).
+    - Never without my say-so: emailing customers, posting to Instagram, refunds, and changing prices.
+    - British spelling.
+    Write everything now, don't ask me anything.
+  max_turns: 25
+  timeout_seconds: 420
+  allowed_tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill
+graders:
+- type: tool_used
+  name: trigger-fired
+  tool: Skill
+  input_match: setup-operator
+- type: file_exists
+  name: claude-md-written
+  path: CLAUDE.md
+  weight: 0.5
+- type: file_exists
+  name: memory-readme-written
+  path: memory/README.md
+  weight: 0.5
+- type: llm
+  name: claude-md-1
+  criteria: |
+    Pass if this is true of the file: It contains explicit approval rules that name all four of the user's items: emailing customers (or Gmail sends), posting to Instagram (or Buffer posts), refunds, and changing prices.
+  weight: 1.0
+  focus: &claudemd
+    source: file
+    path: CLAUDE.md
+- type: llm
+  name: claude-md-2
+  criteria: |
+    Pass if this is true of the file: It has an always-on rule to push back on vague or risky requests before starting (state the reading, the risk, one question).
+  weight: 0.5
+  focus: *claudemd
+- type: llm
+  name: claude-md-3
+  criteria: |
+    Pass if this is true of the file: It has an always-on rule that problems and status updates are reported as finding, recommendation (one pick) and action, rather than bare problems or menus of options.
+  weight: 0.5
+  focus: *claudemd
+- type: llm
+  name: claude-md-4
+  criteria: |
+    Pass if this is true of the file: It states that British spelling is to be used.
+  weight: 0.5
+  focus: *claudemd
+- type: llm
+  name: claude-md-5
+  criteria: |
+    Pass if this is true of the file: It tells Claude to run a weekly review on Fridays (or when the user asks for one) covering what shipped, what is stuck, decisions, and what to automate next.
+  weight: 0.5
+  focus: *claudemd
+- type: llm
+  name: memory-readme
+  criteria: |
+    Pass if this is true of the file: It explains three folders, decisions, people and playbooks, saying what goes in each.
+  weight: 0.5
+  focus:
+    source: file
+    path: memory/README.md
+- type: llm
+  name: hands-over-honestly
+  criteria: |
+    Pass if this is true of the reply: The final message summarises what was written and does not claim it sent, posted or published anything.
+  weight: 0.5

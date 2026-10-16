@@ -1,0 +1,38 @@
+schema_version: '1.0'
+name: 02-empty-folder-asks
+description: Nothing to read. Should say so briefly and ask one question rather than invent a week.
+tags:
+- weekly-review
+- fire
+- cold-start
+runs: 3
+execution:
+  prompt: |
+    It's Friday, let's do the weekly review.
+  max_turns: 8
+  timeout_seconds: 180
+  allowed_tools:
+  - Read
+  - Glob
+  - Grep
+  - Skill
+graders:
+- type: tool_used
+  name: trigger-fired
+  tool: Skill
+  input_match: weekly-review
+- type: llm
+  name: cold-start-1
+  criteria: |
+    Pass if this is true of the reply: It does not invent anything that shipped, got stuck or was decided this week.
+  weight: 1.0
+- type: llm
+  name: cold-start-2
+  criteria: |
+    Pass if this is true of the reply: It asks the user ONE main question about their week (for example what got done and what didn't), not a list of several separate questions.
+  weight: 1.0
+- type: llm
+  name: cold-start-3
+  criteria: |
+    Pass if this is true of the reply: It briefly says it found no notes, history or records to work from (or equivalent) before asking.
+  weight: 0.5
