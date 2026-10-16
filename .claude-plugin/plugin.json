@@ -6,7 +6,16 @@
     "name": "Kristian Papadakis",
     "url": "https://kristianpapadakis.com"
   },
-  "homepage": "https://github.com/kristian-presso/claude-skills",
+  "homepage": "https://github.com/kristian-presso/claude-operator-starter",
   "license": "MIT",
-  "keywords": ["operations", "founder", "small-business", "claude-md", "hooks", "approval", "weekly-review"]
+  "keywords": [
+    "operations",
+    "founder",
+    "small-business",
+    "claude-md",
+    "hooks",
+    "approval",
+    "weekly-review"
+  ],
+  "repository": "https://github.com/kristian-presso/claude-operator-starter"
 }

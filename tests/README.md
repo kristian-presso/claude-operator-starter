@@ -13,7 +13,7 @@ Unit tests for the approval-gate hook, `scripts/approval_gate.py`. Python `unitt
 From the repository root:
 
 ```bash
-python3 -m unittest discover -s plugins/operator-starter/tests -v
+python3 -m unittest discover -s tests -v
 ```
 
 The tests run the script as Claude Code does, with JSON on stdin, and need `git` on PATH.

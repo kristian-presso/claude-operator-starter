@@ -1,0 +1,24 @@
+{
+  "name": "claude-operator-starter",
+  "owner": {
+    "name": "Kristian Papadakis",
+    "url": "https://kristianpapadakis.com"
+  },
+  "description": "Operator starter for Claude Code, as a standalone Claude Code marketplace. All departments in one place: https://github.com/kristian-presso/claude-skills",
+  "plugins": [
+    {
+      "name": "operator-starter",
+      "source": "./",
+      "description": "A way of working for running a small business or side project with Claude Code: an interview that writes your CLAUDE.md rules and memory folder, approval-gate hooks that ask before Claude sends, publishes, pays or deletes, and a Friday weekly review.",
+      "category": "productivity",
+      "keywords": [
+        "operations",
+        "claude-md",
+        "hooks",
+        "approval",
+        "weekly-review"
+      ],
+      "homepage": "https://github.com/kristian-presso/claude-operator-starter"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 Standard library only. Run from the repository root or the plugin folder:
 
-    python3 -m unittest discover -s plugins/operator-starter/tests -v
+    python3 -m unittest discover -s tests -v
 
 Each test runs the script as Claude Code does: JSON on stdin, decision JSON (or nothing)
 on stdout, exit code 0.
